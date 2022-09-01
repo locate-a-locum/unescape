@@ -5,6 +5,22 @@ var regexCache = {};
 var all;
 
 var charSets = {
+  basic: {
+    '&quot;': '"',
+    '&#34;': '"',
+    '&apos;': '\'',
+    '&#39;': '\'',
+    '&amp;': '&',
+    '&#38;': '&',
+    '&gt;': '>',
+    '&#62;': '>',
+
+    '&lt;': '<',
+    '&#60;': '<',
+
+    '&nbsp;': '\u00a0',
+    '&#160;': '\u00a0'
+  },
   default: {
     '&quot;': '"',
     '&#34;': '"',
@@ -55,7 +71,6 @@ Object.defineProperty(charSets, 'all', {
  * @param  {String} `str` String with HTML entities to un-escape.
  * @return {String}
  */
-
 function unescape(str, type) {
   if (!isString(str)) return '';
   var chars = charSets[type || 'default'];
