@@ -1,6 +1,6 @@
 {
   "name": "@locate-a-locum/unescape",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Convert HTML entities to HTML characters, e.g. `&gt;` converts to `>`.",
   "main": "index.js",
   "homepage": "https://github.com/jonschlinkert/unescape",
