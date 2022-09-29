@@ -60,6 +60,15 @@ describe('unescape', function() {
     });
   });
 
+  it('should unescape basic HTML entities', function() {
+    assert.equal(decode('&quot;', 'basic'), '"');
+      assert.equal(decode('&#34;', 'basic'), '"');
+      assert.equal(decode('&apos;', 'basic'), '\'');
+      assert.equal(decode('&#39;', 'basic'), '\'');
+      assert.equal(decode('&amp;', 'basic'), '&');
+      assert.equal(decode('&#38;', 'basic'), '&');
+  });
+
   describe('characters', function() {
     it('should get an object of HTML entities/characters', function() {
       assert.deepEqual(decode.chars, {
