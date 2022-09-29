@@ -4,59 +4,69 @@ var extend = require('extend-shallow');
 var regexCache = {};
 var all;
 
-var charSets = {
-  basic: {
-    '&quot;': '"',
-    '&#34;': '"',
-    '&apos;': '\'',
-    '&#39;': '\'',
-    '&amp;': '&',
-    '&#38;': '&',
+const defaultCharSet = {
+  '&quot;': '"',
+  '&#34;': '"',
 
-    '&nbsp;': '\u00a0',
-    '&#160;': '\u00a0'
-  },
-  default: {
-    '&quot;': '"',
-    '&#34;': '"',
+  '&apos;': '\'',
+  '&#39;': '\'',
 
-    '&apos;': '\'',
-    '&#39;': '\'',
+  '&amp;': '&',
+  '&#38;': '&',
 
-    '&amp;': '&',
-    '&#38;': '&',
+  '&nbsp;': '\u00a0',
+  '&#160;': '\u00a0',
 
-    '&gt;': '>',
-    '&#62;': '>',
+  '&plus;': '+',
+  '&#43;': '+',
 
-    '&lt;': '<',
-    '&#60;': '<'
-  },
-  extras: {
-    '&cent;': '¢',
-    '&#162;': '¢',
+  '&commat;': '@',
+  '&#64;': '@'
+};
 
-    '&copy;': '©',
-    '&#169;': '©',
+const urlCharSet = {
+  ...defaultCharSet,
 
-    '&euro;': '€',
-    '&#8364;': '€',
+  '&equals;': '=',
+  '&#61;': '='
+};
 
-    '&pound;': '£',
-    '&#163;': '£',
+const extrasCharSet = {
+  '&cent;': '¢',
+  '&#162;': '¢',
 
-    '&reg;': '®',
-    '&#174;': '®',
+  '&copy;': '©',
+  '&#169;': '©',
 
-    '&yen;': '¥',
-    '&#165;': '¥'
-  }
+  '&euro;': '€',
+  '&#8364;': '€',
+
+  '&pound;': '£',
+  '&#163;': '£',
+
+  '&reg;': '®',
+  '&#174;': '®',
+
+  '&yen;': '¥',
+  '&#165;': '¥',
+
+  '&gt;': '>',
+  '&#62;': '>',
+
+  '&lt;': '<',
+  '&#60;': '<'
+};
+
+const charSets = {
+  default: defaultCharSet,
+  extras: extrasCharSet,
+  url: urlCharSet
 };
 
 // don't merge char sets unless "all" is explicitly called
 Object.defineProperty(charSets, 'all', {
   get: function() {
-    return all || (all = extend({}, charSets.default, charSets.extras));
+    return all || (all = extend({}, charSets.default, charSets.extras, charSets.url));
   }
 });
 
@@ -67,9 +77,12 @@ Object.defineProperty(charSets, 'all', {
  * @return {String}
  */
 function unescape(str, type) {
-  if (!isString(str)) return '';
-  var chars = charSets[type || 'default'];
-  var regex = toRegex(type, chars);
+  if (!isString(str)) {
+    return '';
+  }
+
+  const chars = charSets[type || 'default'];
+  const regex = toRegex(type, chars);
   return str.replace(regex, function(m) {
     return chars[m];
   });
@@ -79,8 +92,9 @@ function toRegex(type, chars) {
   if (regexCache[type]) {
     return regexCache[type];
   }
-  var keys = Object.keys(chars).join('|');
-  var regex = new RegExp('(?=(' + keys + '))\\1', 'g');
+
+  const keys = Object.keys(chars).join('|');
+  const regex = new RegExp('(?=(' + keys + '))\\1', 'g');
   regexCache[type] = regex;
   return regex;
 }
@@ -97,8 +111,10 @@ function isString(str) {
  * Expose charSets
  */
 
-unescape.chars = charSets.default;
-unescape.extras = charSets.extras;
+unescape.defaultChars = charSets.default;
+unescape.extrasChars = charSets.extras;
+unescape.urlChars = charSets.url;
+
 // don't trip the "charSets" getter unless it's explicitly called
 Object.defineProperty(unescape, 'all', {
   get: function() {
